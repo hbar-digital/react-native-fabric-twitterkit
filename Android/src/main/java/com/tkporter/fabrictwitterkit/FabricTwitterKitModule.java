@@ -1,7 +1,9 @@
 package com.tkporter.fabrictwitterkit;
 
+import java.util.Map;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -18,6 +20,9 @@ import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterAuthToken;
+import com.twitter.sdk.android.core.OAuthSigning;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.models.User;
@@ -92,7 +97,6 @@ public class FabricTwitterKitModule extends ReactContextBaseJavaModule implement
 
     @ReactMethod
     public void login(final Callback callback) {
-
         loginButton = new TwitterLoginButton(getCurrentActivity());
         loginButton.setCallback(new com.twitter.sdk.android.core.Callback<TwitterSession>() {
             @Override
@@ -117,16 +121,11 @@ public class FabricTwitterKitModule extends ReactContextBaseJavaModule implement
 
     @ReactMethod
     public void getOAuthHeaders(final Callback callback) {
-
       TwitterAuthConfig authConfig = TwitterCore.getInstance().getAuthConfig();
-      TwitterAuthToken authToken = session.getAuthToken();
-
+      TwitterAuthToken authToken = TwitterCore.getInstance().getSessionManager().getActiveSession().getAuthToken();
       OAuthSigning oauthSigning = new OAuthSigning(authConfig, authToken);
-
       Map<String, String> authHeaders = oauthSigning.getOAuthEchoHeadersForVerifyCredentials();
-
       callback.invoke(null, authHeaders);
-
     }
 
     @ReactMethod
