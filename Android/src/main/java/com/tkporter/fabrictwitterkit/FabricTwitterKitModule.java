@@ -125,7 +125,13 @@ public class FabricTwitterKitModule extends ReactContextBaseJavaModule implement
       TwitterAuthToken authToken = TwitterCore.getInstance().getSessionManager().getActiveSession().getAuthToken();
       OAuthSigning oauthSigning = new OAuthSigning(authConfig, authToken);
       Map<String, String> authHeaders = oauthSigning.getOAuthEchoHeadersForVerifyCredentials();
-      callback.invoke(null, authHeaders);
+
+      WritableMap result = new WritableNativeMap();
+      for (Map.Entry<String, String> entry : authHeaders.entrySet()) {
+        result.putString(entry.getKey(), entry.getValue());
+      }
+
+      callback.invoke(null, result);
     }
 
     @ReactMethod
