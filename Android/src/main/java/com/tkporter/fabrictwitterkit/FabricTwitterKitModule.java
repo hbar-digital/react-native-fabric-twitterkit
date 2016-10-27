@@ -116,6 +116,20 @@ public class FabricTwitterKitModule extends ReactContextBaseJavaModule implement
     }
 
     @ReactMethod
+    public void getOAuthHeaders(final Callback callback) {
+
+      TwitterAuthConfig authConfig = TwitterCore.getInstance().getAuthConfig();
+      TwitterAuthToken authToken = session.getAuthToken();
+
+      OAuthSigning oauthSigning = new OAuthSigning(authConfig, authToken);
+
+      Map<String, String> authHeaders = oauthSigning.getOAuthEchoHeadersForVerifyCredentials();
+
+      callback.invoke(null, authHeaders);
+
+    }
+
+    @ReactMethod
     public void fetchProfile(final Callback callback) {
 
         try {
@@ -171,4 +185,3 @@ public class FabricTwitterKitModule extends ReactContextBaseJavaModule implement
     }
 
 }
-
